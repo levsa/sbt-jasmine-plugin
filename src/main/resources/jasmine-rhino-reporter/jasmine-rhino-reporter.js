@@ -38,14 +38,31 @@ var RhinoReporter = function() {
         reportSpecStarting: function(spec) {
         },
 
+        reportSpecResultsVerbose: function(spec) {
+            if (spec.suite != EnvJasmine.currentSuite) {
+                EnvJasmine.currentSuite = spec.suite;
+                print("A " + spec.suite.getFullName());
+            }
+            var color = (spec.results().passed()) ? 'green' : 'red';
+            print(EnvJasmine[color]("  " + spec.description));
+        },
+
         reportSpecResults: function(spec) {
+            var verbose = EnvJasmine.printAllSpecs;
+            if (verbose) {
+                this.reportSpecResultsVerbose(spec);
+            }
             if (spec.results().passed()) {
-                System.out.print(EnvJasmine.green("."));
+                if (!verbose) {
+                    System.out.print(EnvJasmine.green("."));
+                }
             } else {
                 var i, msg, result,
                     specResults = spec.results().getItems();
 
-                System.out.print(EnvJasmine.red("F"));
+                if (!verbose) {
+                    System.out.print(EnvJasmine.red("F"));
+                }
 
                 msg = [
                     "FAILED",
@@ -97,19 +114,24 @@ var RhinoSpecReporter = function() {
             if (EnvJasmine.incrementalOutput) {
                 print(EnvJasmine.specFile);
             }
+            EnvJasmine.runnerPassedCount = 0;
+            EnvJasmine.runnerFailedCount = 0;
+            EnvJasmine.runnerTotalCount = 0;
         },
 
         reportRunnerResults: function(runner) {
             var results = runner.results();
 
             if (EnvJasmine.incrementalOutput) {
-                print();
                 print([
-                    EnvJasmine.green("Passed: " + (results.passedCount - EnvJasmine.passedCount)),
-                    EnvJasmine.red("Failed: " + (results.failedCount - EnvJasmine.failedCount)),
-                    EnvJasmine.plain("Total: " + (results.totalCount - EnvJasmine.totalCount))
+                    EnvJasmine.green("Passed: " + EnvJasmine.runnerPassedCount),
+                    EnvJasmine.red("Failed: " + EnvJasmine.runnerFailedCount),
+                    EnvJasmine.plain("Total: " + EnvJasmine.runnerTotalCount)
                 ].join(' '));
             }
+            EnvJasmine.passedCount += EnvJasmine.runnerPassedCount;
+            EnvJasmine.failedCount += EnvJasmine.runnerFailedCount;
+            EnvJasmine.totalCount += EnvJasmine.runnerTotalCount;
         },
 
         reportSuiteResults: function(suite) {
@@ -118,15 +140,31 @@ var RhinoSpecReporter = function() {
         reportSpecStarting: function(spec) {
         },
 
+        reportSpecResultsVerbose: function(spec) {
+            if (spec.suite != EnvJasmine.currentSuite) {
+                EnvJasmine.currentSuite = spec.suite;
+                print("A " + spec.suite.getFullName());
+            }
+            var color = (spec.results().passed()) ? 'green' : 'red';
+            print(EnvJasmine[color]("  " + spec.description));
+        },
+
         reportSpecResults: function(spec) {
+            var verbose = EnvJasmine.printAllSpecs;
+            if (verbose) {
+                this.reportSpecResultsVerbose(spec);
+            }
             if (spec.results().passed()) {
-                System.out.print(EnvJasmine.green("."));
-                EnvJasmine.passedCount += 1;
+                if (!verbose) {
+                    System.out.print(EnvJasmine.green("."));
+                }
+                EnvJasmine.runnerPassedCount += 1;
             } else {
                 var i, msg, result,
                     specResults = spec.results().getItems();
-
-                System.out.print(EnvJasmine.red("F"));
+                if (!verbose) {
+                    System.out.print(EnvJasmine.red("F"));
+                }
 
                 msg = [
                     "FAILED",
@@ -147,11 +185,11 @@ var RhinoSpecReporter = function() {
                         }
                     }
                 }
-                EnvJasmine.failedCount += 1;
+                EnvJasmine.runnerFailedCount += 1;
 
                 EnvJasmine.results.push(msg.join("\n"));
             }
-            EnvJasmine.totalCount += 1;
+            EnvJasmine.runnerTotalCount += 1;
         },
 
         log: function(str) {
