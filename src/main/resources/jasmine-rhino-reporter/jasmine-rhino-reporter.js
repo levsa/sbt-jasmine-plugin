@@ -123,6 +123,7 @@ var RhinoSpecReporter = function() {
             var results = runner.results();
 
             if (EnvJasmine.incrementalOutput) {
+                print();
                 print([
                     EnvJasmine.green("Passed: " + EnvJasmine.runnerPassedCount),
                     EnvJasmine.red("Failed: " + EnvJasmine.runnerFailedCount),
