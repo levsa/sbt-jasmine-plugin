@@ -90,6 +90,15 @@ the query library as in your test.dependencies.js file you would add the followi
 EnvJasmine.loadGlobal(EnvJasmine.libDir + "jquery-1.4.4.js");
 ```
 
+Settings
+-----------------------
+
+The following settings are available (e.g. in test.dependencies.js):
+
+EnvJasmine.reporterClass = RhinoReporter or RhinoSpecReporter
+EnvJasmine.incrementalOutput = true/false
+EnvJasmine.printAllSpecs = true/false
+
 
 Running as part of test
 -----------------------
